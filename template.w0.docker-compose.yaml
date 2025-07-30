@@ -2,7 +2,7 @@ services:
     worker-0:
         build:
             context: ./
-            dockerfile: ./w0.dockerfile
+            dockerfile: ./base/w0.dockerfile
         container_name: worker-0
         image: worker-0
         ports:

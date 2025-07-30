@@ -70,7 +70,7 @@ CONFIG_EOF
 ENV NODE_EXTRA_CA_CERTS=/etc/ssl/certs/ca-certificates.crt
 ENV PROJECTS_BASE_DIR=/app
 
-COPY ./w0.sh ./w0.setup.sh ./w0.config.yaml ./w0.vscode.settings.json /app/.w0/
+COPY ./base/w0.sh ./base/w0.setup.sh ./w0.config.yaml ./w0.vscode.settings.json /app/.w0/
 
 RUN <<SETUP_EOF
 set -e
