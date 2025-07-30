@@ -8,7 +8,7 @@ services:
         ports:
             - "4242:4242"
         env_file:
-            - ./user.w0.env
+            - ./w0.env
         environment:
             - CURRENT_PROJECT=${CURRENT_PROJECT:-worker-0}
         stdin_open: true

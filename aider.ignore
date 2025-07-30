@@ -6,6 +6,7 @@
 
 # Recursively allow files under subtree
 !/base/**
+!/templates/**
 
 # Specific Files
 !/.gitignore
@@ -28,4 +29,4 @@
 *.env
 
 # Re-Add Even More Specific FIles
-!/template.w0.env
+!/templates/w0.env
