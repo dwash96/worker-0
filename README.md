@@ -139,7 +139,7 @@ When setting up your `w0.docker-compose.yaml` file, ensure that your volume moun
 services:
     worker-0:
         # ... Other configuration options
-        # ... But I'm assuming you're using the rest of the configuration options from templates.w0.docker-compose.yaml
+        # ... But I'm assuming you're using the rest of the configuration options from templates/w0.docker-compose.yaml
         volumes:
             # For the 'frontend' project
             - ../frontend:/app/frontend/app # Main project folder
