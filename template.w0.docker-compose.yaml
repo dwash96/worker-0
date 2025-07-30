@@ -1,0 +1,22 @@
+services:
+    worker-0:
+        build:
+            context: ./
+            dockerfile: ./w0.dockerfile
+        container_name: worker-0
+        image: worker-0
+        ports:
+            - "4242:4242"
+        env_file:
+            - ./user.w0.env
+        environment:
+            - CURRENT_PROJECT=${CURRENT_PROJECT:-worker-0}
+        stdin_open: true
+        tty: true
+        volumes:
+            # Mount project folder and its worktrees according to config
+            - ../app:/app/worker-0/app
+            - ./worktrees/:/app/worker-0/worktrees/
+            # Second project
+            - ../app-2:/app/worker-1/app-2
+            - ./worktrees/:/app/worker-1/worktrees/

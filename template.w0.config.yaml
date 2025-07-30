@@ -1,0 +1,44 @@
+# Global settings applied to all projects
+base:
+    model: gemini-2.5-pro
+    weak-model: gemini-2.5-flash
+    show-model-warnings: false
+    edit-format: diff
+    editor-edit-format: editor-diff
+    multiline: true
+    auto-commits: false
+    architect: true
+
+    # Global VS Code extensions to install for all projects
+    extensions:
+        - arcticicestudio.nord-visual-studio-code
+        - esbenp.prettier-vscode
+        - jackiotyu.git-worktree-manager
+
+# Project-specific settings
+projects:
+    worker-0:
+        config:
+            name: my-project
+            folder: app
+            diff_branch: main
+            worktrees:
+                - name: app-2
+                - name: app-3
+                - name: app-4
+        aider:
+            read: CONVENTIONS.md
+            aiderignore: aider.ignore
+            subtree-only: true
+    worker-1:
+        config:
+            name: my-second-project
+            folder: app-2
+            diff_branch: main
+            worktrees:
+                - name: feature-1
+                - name: feature-2
+        aider:
+            read: README.md
+            aiderignore: aider.ignore
+            subtree-only: true
