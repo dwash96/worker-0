@@ -1,4 +1,4 @@
-FROM paulgauthier/aider-full:v0.85.2
+FROM dustinwashington/aider:latest
 
 USER root
 
@@ -7,7 +7,7 @@ set -e
 
 # Install base packages
 apt-get update
-apt-get install -y curl wget ca-certificates direnv
+apt-get install -y curl wget ca-certificates direnv fzf
 rm -rf /var/lib/apt/lists/*
 
 BASE_EOF
