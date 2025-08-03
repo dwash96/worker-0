@@ -78,84 +78,6 @@ fi
     --config "${CONFIG_PATH}"
 EOF
 
-# Create the w0-agent command that accepts a worker name
-cat > /usr/local/bin/w0-agent <<'EOF'
-#!/bin/bash
-WORKER="$1"
-
-# If no worker specified, try to determine from current directory
-if [ -z "${WORKER}" ]; then
-    # Try to find which worker corresponds to the current path
-    CURRENT_PATH=$(pwd)
-
-    # Extract the first directory after PROJECTS_BASE_DIR
-    POTENTIAL_WORKER=$(echo "${CURRENT_PATH}" | sed -E "s|${PROJECTS_BASE_DIR}/([^/]+).*|\1|")
-        
-    # Check if this potential worker exists in the config
-    if yq eval '.projects | has("'${POTENTIAL_WORKER}'")' /app/.w0/w0.config.yaml | grep -q "true"; then
-        WORKER="${POTENTIAL_WORKER}"
-    fi
-
-    if [ -z "${WORKER}" ]; then
-        echo "Error: No worker specified and couldn't determine worker from current directory."
-        echo "Usage: w0 agent <worker>"
-        echo "Available workers:"
-        yq eval '.projects | keys | .[]' /app/.w0/w0.config.yaml | sed 's/^/  /'
-        exit 1
-    fi
-fi
-
-# Verify worker exists
-if ! yq eval '.projects | has("'${WORKER}'")' /app/.w0/w0.config.yaml | grep -q "true"; then
-    echo "Error: Worker '${WORKER}' not found in configuration."
-    echo "Available workers:"
-    yq eval '.projects | keys | .[]' /app/.w0/w0.config.yaml | sed 's/^/  /'
-    exit 1
-fi
-
-PROJECT_PATH="${PROJECTS_BASE_DIR}/${WORKER}"
-CONFIG_PATH=$(cat "${PROJECT_PATH}/.w0/config_path" 2>/dev/null)
-
-if [ -z "${CONFIG_PATH}" ] || [ ! -f "${CONFIG_PATH}" ]; then
-    echo "Error: Configuration for worker ${WORKER} not found."
-    exit 1
-fi
-
-REPO_PATH="${PROJECT_PATH}/$(yq eval ".projects.${WORKER}.config.folder" /app/.w0/w0.config.yaml)"
-
-# Check if current directory is within a worktree
-CURRENT_PATH=$(pwd)
-if [[ "${CURRENT_PATH}" == *"/worktrees/"* ]]; then
-    # Extract the worktree name from path
-    WORKTREE_NAME=$(echo "${CURRENT_PATH}" | sed -E "s|.*/worktrees/([^/]+).*|\1|")
-    
-    if [ -n "${WORKTREE_NAME}" ]; then
-        echo "Detected worktree: ${WORKTREE_NAME}"
-        # Override REPO_PATH to use the worktree path
-        WORKTREE_PATH="${PROJECT_PATH}/worktrees/${WORKTREE_NAME}"
-        if [ -d "${WORKTREE_PATH}" ]; then
-            REPO_PATH="${WORKTREE_PATH}"
-        fi
-    fi
-fi
-
-# Execute aider in the worker's repo directory
-cd "${REPO_PATH}"
-
-# Load environment from direnv if available
-if command -v direnv &> /dev/null; then
-  eval "$(direnv export bash)"
-fi
-
-/venv/bin/aider \
-    --watch-files \
-    --analytics-disable \
-    --no-auto-commits \
-    --no-verify-ssl \
-    --multiline \
-    --navigator \
-    --config "${CONFIG_PATH}"
-EOF
 
 # Create the w0-review command that accepts a worker name
 cat > /usr/local/bin/w0-review <<'EOF'
@@ -324,6 +246,12 @@ for worker in $(yq eval '.projects | keys | .[]' /app/.w0/w0.config.yaml); do
 done
 EOF
 
+# Create the w0-vibes command
+cat > /usr/local/bin/w0-vibes <<'EOF'
+#!/bin/bash
+crush "$@"
+EOF
+
 # Create the w0 unified command
 cat > /usr/local/bin/w0 <<'EOF'
 #!/bin/bash
@@ -334,9 +262,9 @@ usage() {
     echo ""
     echo "Commands:"
     echo "  cli [worker]      Start an Aider session for the specified worker or current directory"
-    echo "  agent [worker]    Start an Aider agent session for the specified worker or current directory"
     echo "  review [worker]   Review code changes for the specified worker or current directory"
     echo "  list              List all configured workers and their worktrees"
+    echo "  vibes             Run crush commands for Charm SSH"
     echo "  help              Display this help information"
     echo ""
     echo "For more information on a specific command, run: w0 <command> --help"
@@ -358,9 +286,6 @@ case "${COMMAND}" in
         # Call the ac-cli script with the remaining arguments
         w0-cli "$@"
         ;;
-    agent)
-        w0-agent "$@"
-        ;;
     review)
         # Call the ac-review script with the remaining arguments
         w0-review "$@"
@@ -368,6 +293,9 @@ case "${COMMAND}" in
     list)
         # Call the ac-list script
         w0-list
+        ;;
+    vibes)
+        w0-vibes "$@"
         ;;
     help)
         # Call the ac-help script
@@ -395,10 +323,6 @@ echo "  w0 cli [worker]"
 echo "    Start an Aider session for the specified worker or current directory."
 echo "    Example: w0 cli frontend"
 echo ""
-echo "  w0 agent [worker]"
-echo "    Start an Aider agent session for the specified worker or current directory."
-echo "    Example: w0 agent frontend"
-echo ""
 echo "  w0 review [worker]"
 echo "    Review code changes for the specified worker or current directory."
 echo "    Compares against the diff_branch in the config."
@@ -407,6 +331,10 @@ echo ""
 echo "  w0 list"
 echo "    List all configured workers and their worktrees."
 echo "    Shows the worker name, project name, branch, and path."
+echo ""
+echo "  w0 vibes"
+echo "    Run crush commands for Charm SSH."
+echo "    Example: w0 vibes ls"
 echo ""
 echo "  w0 help"
 echo "    Display this help information."
@@ -419,5 +347,5 @@ chmod +x /usr/local/bin/w0-cli
 chmod +x /usr/local/bin/w0-review
 chmod +x /usr/local/bin/w0-list
 chmod +x /usr/local/bin/w0-help
-chmod +x /usr/local/bin/w0-agent
+chmod +x /usr/local/bin/w0-vibes
 chmod +x /usr/local/bin/w0

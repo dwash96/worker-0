@@ -16,9 +16,6 @@
 !/w0.sh
 !/w0.setup.sh
 !/start.sh
-!/template.w0.config.yaml
-!/template.w0.docker-compose.yaml
-!/template.w0.vscode.settings.json
 !/README.md
 !/LICENSE
 

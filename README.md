@@ -1,6 +1,6 @@
 # Worker-0 Configuration Guide
 
-This document explains how to configure and use Worker-0 (A clusterized wrapper/IDE workspace around the Aider AI assistant) with multiple projects and worktrees within them.
+This document explains how to configure and use Worker-0 (A clusterized wrapper/IDE workspace around a slightly forked version of the Aider AI assistant) with multiple projects and worktrees within them.
 
 ## Main Configuration File: `w0.config.yaml`
 
@@ -82,6 +82,10 @@ Create an aider.ignore file in the linked repository to specify which files and 
 -   `GIT_EMAIL`: Git email for commits
 
 Additional environment variables for LLM access keys will also be added in this file
+
+### LLM API Key Configuration
+
+When using Crush, you will most likely have to reconfigure your LLM API access keys. For more details, please refer to the [official Crush documentation](https://github.com/charmbracelet/crush).
 
 ## Example Configuration: `w0.config.yaml`
 
@@ -240,6 +244,21 @@ backend (api-v2)         Name:   Backend API
 
 Note: Inside the vscode/coder command line, the paths are directly clickable to open the folder for easy navigation.
 
+### Using Crush for Pure Vibe Coding
+
+The `w0 vibes` command provides an interface to `crush`, allowing for fully agentic vibe coding where the interface is secondary although I personally prefer aider for the precision it brings for maintaining pre-existin codebases. For more information, you can check out the crush repo [here](https://github.com/charmbracelet/crush)
+
+```bash
+# List files in your Charm account's root directory
+w0 vibes ls
+
+# Copy a local file to your Charm account
+w0 vibes scp my-local-file.txt:
+
+# Copy a file from your Charm account to the local directory
+w0 vibes scp my-charmed-file.txt:.
+```
+
 ### Getting Help
 
 ```bash
@@ -252,6 +271,7 @@ This command shows detailed information about all available Worker-0 commands:
 -   `w0 cli`: Start an Aider session for a project
 -   `w0 review`: Review code changes for a project
 -   `w0 list`: List all configured projects and worktrees
+-   `w0 vibes`: Run crush commands for Charm SSH
 -   `w0 help`: Display help information
 
 The help text includes usage examples and notes about automatic project detection.

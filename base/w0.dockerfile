@@ -1,4 +1,4 @@
-FROM dustinwashington/aider:latest
+FROM dustinwashington/aider:v0.86.0
 
 USER root
 
@@ -7,7 +7,7 @@ set -e
 
 # Install base packages
 apt-get update
-apt-get install -y curl wget ca-certificates direnv fzf
+apt-get install -y curl wget ca-certificates direnv fzf gnupg
 rm -rf /var/lib/apt/lists/*
 
 BASE_EOF
@@ -37,6 +37,18 @@ YQ_BINARY="yq_linux_amd64"
 wget https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/${YQ_BINARY}.tar.gz -O - \
  | tar xz && mv ${YQ_BINARY} /usr/local/bin/yq
 OTHER_PACKAGES_EOF
+
+RUN <<CRUSH_EOF
+set -e
+
+# install crush for charmbracelet
+CRUSH_VERSION="0.2.1"
+CRUSH_BINARY="crush_${CRUSH_VERSION}_amd64"
+
+wget "https://github.com/charmbracelet/crush/releases/download/v${CRUSH_VERSION}/${CRUSH_BINARY}.deb" -O "/tmp/${CRUSH_BINARY}.deb"
+dpkg -i "/tmp/${CRUSH_BINARY}.deb"
+
+CRUSH_EOF
 
 RUN <<CONFIG_EOF
 set -e
