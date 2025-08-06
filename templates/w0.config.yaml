@@ -9,6 +9,18 @@ base:
     auto-commits: false
     architect: true
 
+    # For more information: https://modelcontextprotocol.io/introduction
+    # mcp-servers: |
+    #   {
+    #     "mcpServers": {
+    #       "git": {
+    #         "transport": "stdio",
+    #         "command": "aider-mcp-server",
+    #         "args": ["--tool", "git"]
+    #       }
+    #     }
+    #   }
+
     # Global VS Code extensions to install for all projects
     extensions:
         - arcticicestudio.nord-visual-studio-code

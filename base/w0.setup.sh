@@ -246,12 +246,6 @@ for worker in $(yq eval '.projects | keys | .[]' /app/.w0/w0.config.yaml); do
 done
 EOF
 
-# Create the w0-vibes command
-cat > /usr/local/bin/w0-vibes <<'EOF'
-#!/bin/bash
-crush "$@"
-EOF
-
 # Create the w0 unified command
 cat > /usr/local/bin/w0 <<'EOF'
 #!/bin/bash
@@ -264,7 +258,6 @@ usage() {
     echo "  cli [worker]      Start an Aider session for the specified worker or current directory"
     echo "  review [worker]   Review code changes for the specified worker or current directory"
     echo "  list              List all configured workers and their worktrees"
-    echo "  vibes             Run crush commands for Charm SSH"
     echo "  help              Display this help information"
     echo ""
     echo "For more information on a specific command, run: w0 <command> --help"
@@ -293,9 +286,6 @@ case "${COMMAND}" in
     list)
         # Call the ac-list script
         w0-list
-        ;;
-    vibes)
-        w0-vibes "$@"
         ;;
     help)
         # Call the ac-help script
@@ -332,10 +322,6 @@ echo "  w0 list"
 echo "    List all configured workers and their worktrees."
 echo "    Shows the worker name, project name, branch, and path."
 echo ""
-echo "  w0 vibes"
-echo "    Run crush commands for Charm SSH."
-echo "    Example: w0 vibes ls"
-echo ""
 echo "  w0 help"
 echo "    Display this help information."
 echo ""
@@ -347,5 +333,4 @@ chmod +x /usr/local/bin/w0-cli
 chmod +x /usr/local/bin/w0-review
 chmod +x /usr/local/bin/w0-list
 chmod +x /usr/local/bin/w0-help
-chmod +x /usr/local/bin/w0-vibes
 chmod +x /usr/local/bin/w0

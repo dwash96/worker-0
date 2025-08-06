@@ -85,7 +85,49 @@ Additional environment variables for LLM access keys will also be added in this 
 
 ### LLM API Key Configuration
 
-When using Crush, you will most likely have to reconfigure your LLM API access keys. For more details, please refer to the [official Crush documentation](https://github.com/charmbracelet/crush).
+If you are using a local LLM, you may need to configure environment variables for API keys or other settings.
+
+## MCP Server Configuration
+
+Model Control Protocol (MCP) servers extend aider's capabilities by providing additional tools and functionality to the AI models. You can configure them in your `w0.config.yaml` file within the `base` or project-specific settings.
+
+For example, you can add this to the `base` section of your `w0.config.yaml`:
+
+```yaml
+base:
+    # ... other settings
+    mcp-servers: |
+        {
+          "mcpServers": {
+            "git": {
+              "transport": "http",
+              "url": "http://localhost:8000"
+            }
+          }
+        }
+```
+
+You can also define it per project:
+
+```yaml
+projects:
+    worker-0:
+        config:
+            # ...
+        aider:
+            # ...
+            mcp-servers: |
+                {
+                  "mcpServers": {
+                    "another-tool": {
+                      "transport": "stdio",
+                      "command": "my-tool-server"
+                    }
+                  }
+                }
+```
+
+Please see the [Model Context Protocol documentation](https://modelcontextprotocol.io/introduction) for more information.
 
 ## Example Configuration: `w0.config.yaml`
 
@@ -244,21 +286,6 @@ backend (api-v2)         Name:   Backend API
 
 Note: Inside the vscode/coder command line, the paths are directly clickable to open the folder for easy navigation.
 
-### Using Crush for Pure Vibe Coding
-
-The `w0 vibes` command provides an interface to `crush`, allowing for fully agentic vibe coding where the interface is secondary although I personally prefer aider for the precision it brings for maintaining pre-existin codebases. For more information, you can check out the crush repo [here](https://github.com/charmbracelet/crush)
-
-```bash
-# List files in your Charm account's root directory
-w0 vibes ls
-
-# Copy a local file to your Charm account
-w0 vibes scp my-local-file.txt:
-
-# Copy a file from your Charm account to the local directory
-w0 vibes scp my-charmed-file.txt:.
-```
-
 ### Getting Help
 
 ```bash
@@ -271,7 +298,6 @@ This command shows detailed information about all available Worker-0 commands:
 -   `w0 cli`: Start an Aider session for a project
 -   `w0 review`: Review code changes for a project
 -   `w0 list`: List all configured projects and worktrees
--   `w0 vibes`: Run crush commands for Charm SSH
 -   `w0 help`: Display help information
 
 The help text includes usage examples and notes about automatic project detection.
