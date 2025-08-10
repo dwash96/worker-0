@@ -1,4 +1,4 @@
-FROM dustinwashington/aider:v0.86.2
+FROM dustinwashington/aider:v0.87.0
 
 USER root
 
